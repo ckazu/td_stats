@@ -1,0 +1,38 @@
+body {
+  background: #fefefe;
+
+  .subdomain-text {
+    fill: #333;
+  }
+
+  table {
+    background: #fcfcfc;
+    tr {
+      td {
+        padding: 0 12px;
+        &:first-child { border-left: 4px solid #666; }
+        &:last-child { border-right: 4px solid #666; }
+      }
+    }
+
+    tr[class^="t"] {
+      td:first-child { border-left: 4px solid #c99999; }
+      td:last-child { border-right: 4px solid #c99999; }
+    }
+
+    tr[class^="e"] {
+      td:first-child { border-left: 4px solid #66c666; }
+      td:last-child { border-right: 4px solid #66c666; }
+    }
+
+    tr[class^="m"] {
+      td:first-child { border-left: 4px solid #6666c6; }
+      td:last-child { border-right: 4px solid #6666c6; }
+    }
+
+    tr[class^="m"] {
+      td:first-child { border-left: 4px solid #c6c666; }
+      td:last-child { border-right: 4px solid #c6c666; }
+    }
+  }
+}

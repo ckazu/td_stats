@@ -1,0 +1,56 @@
+!!!5
+%html
+  %head
+    = haml :_head
+  %body
+    %h1 TreasureData Stats
+    #display
+    .container
+      %h4 クエリ実行時間（最新1,000件）
+      #elapsed
+
+    %table
+      %tr
+        %td
+          .container
+            %h4
+              クエリ実行回数
+              %span#all-previous
+                %button prev
+              %span#all-next
+                %button next
+            #cal-heatmap-all
+        %td
+          .container
+            %h4
+              クエリエラー回数
+              %span#error-previous
+                %button prev
+              %span#error-next
+                %button next
+            #cal-heatmap-error
+
+        - YAML::load(File.read('config.yml'))['default']['td']['databases'].each do |database|
+          %tr{class: database}
+            %td
+              .container
+                %h4
+                  = "クエリ実行回数 (#{database})"
+                  %span{id: "#{database}-previous"}
+                    %button prev
+                  %span{id: "#{database}-next"}
+                    %button next
+                %div{id: "cal-heatmap-#{database}"}
+            %td
+              .container
+                %h4
+                  = "クエリエラー回数 (#{database})"
+                  %span{id: "#{database}-error-previous"}
+                    %button prev
+                  %span{id: "#{database}-error-next"}
+                    %button next
+                %div{id: "cal-heatmap-error-#{database}"}
+            %td
+              .container
+                %h4= "レコード数 (#{database})"
+                %div{id: "count-#{database}"}
