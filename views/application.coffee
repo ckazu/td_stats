@@ -88,6 +88,9 @@ $ ->
           series:
             [
               data: array_data
+              lineWidth: 1
+              marker:
+                radius: 0
             ]
 
     $.getJSON "./elapsed", (data) ->
