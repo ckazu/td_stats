@@ -9,6 +9,7 @@ body {
     background: #fcfcfc;
     tr {
       td {
+        .delta { font-size: 2em; }
         padding: 0 12px;
         &:first-child { border-left: 4px solid #666; }
         &:last-child { border-right: 4px solid #666; }

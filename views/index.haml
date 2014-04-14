@@ -52,5 +52,7 @@
                 %div{id: "cal-heatmap-error-#{database}"}
             %td
               .container
-                %h4= "レコード数 (#{database})"
+                %h4
+                  = "レコード数 (#{database})"
+                  %span.delta{id: "delta-#{database}"}
                 %div{id: "count-#{database}"}
