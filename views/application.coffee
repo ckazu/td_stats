@@ -43,6 +43,7 @@ $ ->
     previousSelector: "#error-previous"
   cal_error.init(_.extend(options, defaultOptions))
 
+  # [ToDo] use defalutOptions
   cal = []
   $.get 'databases', (databases)->
     - _.each databases, (database) ->
@@ -66,12 +67,13 @@ $ ->
 
       $.getJSON "./records/count-#{database}", (data) ->
         array_data = _.map _.pairs(data), (d)->
-          [Number(d[0]), d[1]]
+          [Number(d[0]) * 1000, d[1]]
         $("#count-#{database}").highcharts
           chart:
             type: 'line'
             width: 500
             height: 100
+            zoomType: 'x'
           yAxis:
             title:
               enabled: false
