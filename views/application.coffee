@@ -1,4 +1,35 @@
 $ ->
+  Highcharts.setOptions
+    global:
+      useUTC: false
+      timezoneOffset: 9
+    chart:
+      type: 'line'
+      zoomType: 'x'
+    credits:
+      enabled: false
+    legend:
+      enabled: false
+    title:
+      text: ''
+    yAxis:
+      title:
+        enabled: false
+    xAxis:
+      title:
+        enabled: false
+      labels:
+        enabled: false
+    tooltip:
+      shared: true
+      crosshairs:
+        color: '#ccc'
+    plotOptions:
+      series:
+        lineWidth: 1
+        marker:
+          radius: 0
+
   defaultOptions =
     dataType: 'json'
     domain: 'day'
@@ -71,52 +102,23 @@ $ ->
         $("#delta-#{database}").text "#{array_data[array_data.length - 1][1]}(+#{array_data[array_data.length - 1][1] - array_data[array_data.length - 2][1]})"
         $("#count-#{database}").highcharts
           chart:
-            type: 'line'
             width: 500
             height: 100
-            zoomType: 'x'
-          yAxis:
-            title:
-              enabled: false
           xAxis:
             type: 'datetime'
-            title:
-              enabled: false
-          legend:
-            enabled: false
-          title:
-            text: ''
-          credits:
-            enabled: false
           series:
             [
               data: array_data
-              lineWidth: 1
-              marker:
-                radius: 0
             ]
 
     $.getJSON "./elapsed", (data) ->
       $("#elapsed").highcharts
         chart:
-          type: 'line'
           height: 200
-          zoomType: 'x'
-        yAxis:
-          min: 0
-          title:
-            enabled: false
-        xAxis:
-          title:
-            enabled: false
-          labels:
-            enabled: false
-        legend:
-          enabled: false
-        title:
-          text: ''
         credits:
           enabled: false
+        yAxis:
+          min: 0
         series:
           [
             data: _.values(data)
