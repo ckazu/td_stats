@@ -10,4 +10,9 @@ namespace :aggregate do
   task :records do
     save_records
   end
+
+  desc 'get running jobs from Treasure Data'
+  task :running_jobs do
+    running_jobs
+  end
 end

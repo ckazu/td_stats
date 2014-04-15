@@ -12,8 +12,8 @@ class TdStats
       @client = TreasureData::Client.new config['td']['apikey']
     end
 
-    def jobs
-      @client.jobs(0, 1000)
+    def jobs(opts={})
+      @client.jobs(0, 1000, opts)
     end
 
     def databases
@@ -71,4 +71,11 @@ def save_records
   redis_cli = Redis.new
 
   td_cli.databases.each {|database| redis_cli.set "count-#{database.name}-#{Time.now.to_i}", database.count }
+end
+
+def running_jobs
+  td_cli = TdStats::Client.new
+  redis_cli = Redis.new
+
+  redis_cli.set('running', td_cli.jobs(state='running').count)
 end

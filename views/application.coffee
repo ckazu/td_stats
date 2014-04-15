@@ -141,3 +141,6 @@ $ ->
             data: moving_ave_data
             color: '#f66'
           ]
+
+  $.get "./running", (data) ->
+    $('#running').text data

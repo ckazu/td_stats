@@ -29,6 +29,12 @@
               %span#error-next
                 %button next
             #cal-heatmap-error
+        %td
+          .container
+            %h4
+              実行中ジョブ（10分間隔で更新）
+            %span#running
+            jobs running or queued
 
         - YAML::load(File.read('config.yml'))['default']['td']['databases'].each do |database|
           %tr{class: database}

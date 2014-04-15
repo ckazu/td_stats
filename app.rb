@@ -50,3 +50,8 @@ get '/elapsed' do
 
   json result.to_a
 end
+
+get '/running' do
+  redis_cli = Redis.new
+  redis_cli.get('running')
+end
