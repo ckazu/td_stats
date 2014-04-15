@@ -68,7 +68,7 @@ $ ->
       $.getJSON "./records/count-#{database}", (data) ->
         array_data = _.map _.pairs(data), (d)->
           [Number(d[0]) * 1000, d[1]]
-        $("#delta-#{database}").text "+#{array_data[array_data.length - 1][1] - array_data[array_data.length - 2][1]}"
+        $("#delta-#{database}").text "#{array_data[array_data.length - 1][1]}(+#{array_data[array_data.length - 1][1] - array_data[array_data.length - 2][1]})"
         $("#count-#{database}").highcharts
           chart:
             type: 'line'
