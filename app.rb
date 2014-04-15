@@ -43,10 +43,10 @@ get '/elapsed' do
   keys = redis_cli.keys('job-*')
   result = {}
 
-  keys.each do |date|
+  keys.sort.last(1000).each do |date|
     d = instance_eval redis_cli.get(date)
     result[date.gsub(/job-/, '')] = d[:elapsed] if d[:elapsed]
   end
 
-  json result.to_a.last(1000)
+  json result.to_a
 end
