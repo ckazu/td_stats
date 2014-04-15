@@ -99,6 +99,7 @@ $ ->
       $.getJSON "./records/count-#{database}", (data) ->
         array_data = _.map _.pairs(data), (d)->
           [Number(d[0]) * 1000, d[1]]
+
         $("#delta-#{database}").text "#{array_data[array_data.length - 1][1]}(+#{array_data[array_data.length - 1][1] - array_data[array_data.length - 2][1]})"
         $("#count-#{database}").highcharts
           chart:
@@ -112,6 +113,20 @@ $ ->
             ]
 
     $.getJSON "./elapsed", (data) ->
+      range = 15
+
+      _(data.length).times (n)->
+        if n < range
+          data[n].push 0
+        else
+          moving_ave = 0
+          _(range).times (i) ->
+            moving_ave += data[n - i][1]
+          data[n].push (moving_ave / range)
+
+      moving_ave_data = _.map data, (d) ->
+        [d[0], d[2]]
+
       $("#elapsed").highcharts
         chart:
           height: 200
@@ -121,8 +136,8 @@ $ ->
           min: 0
         series:
           [
-            data: _.values(data)
-            lineWidth: 1
-            marker:
-              radius: 0
+            data: data
+          ,
+            data: moving_ave_data
+            color: '#f66'
           ]
