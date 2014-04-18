@@ -113,18 +113,21 @@ $ ->
             ]
 
     $.getJSON "./elapsed", (data) ->
-      range = 15
-
-      _(data.length).times (n)->
+      n = 0
+      _data = _.map data, (d) ->
+        n += 1
+        [n, d['elapsed']] if d['elapsed']
+      range = 100
+      _(_data.length).times (n)->
         if n < range
-          data[n].push 0
+          _data[n].push 0
         else
           moving_ave = 0
           _(range).times (i) ->
-            moving_ave += data[n - i][1]
-          data[n].push (moving_ave / range)
+            moving_ave += _data[n - i][1]
+          _data[n].push (moving_ave / range)
 
-      moving_ave_data = _.map data, (d) ->
+      moving_ave_data = _.map _data, (d) ->
         [d[0], d[2]]
 
       $("#elapsed").highcharts
@@ -136,10 +139,47 @@ $ ->
           min: 0
         series:
           [
-            data: data
+            data: _data
           ,
             data: moving_ave_data
             color: '#f66'
+          ]
+
+      result = []
+      _.each data, (_data) ->
+        if result[_data['db_name']]
+          result[_data['db_name']].push [Number(moment(_data['end_at'] * 1000).format('HHmm')), _data['elapsed']]
+        else
+          result[_data['db_name']] = [[Number(moment(_data['end_at'] * 1000).format('HHmm')), _data['elapsed']]]
+
+      $("#elapsed_dist").highcharts
+        chart:
+          type: 'scatter'
+          height: 200
+        credits:
+          enabled: false
+        legend:
+          enabled: true
+        yAxis:
+          min: 0
+        xAxis:
+          labels:
+            enabled: true
+        series:
+          [
+            name: 'TSS2'
+            data: result['tss2_production']
+            color: 'rgba(223, 83, 83, .2)'
+            marker:
+              radius: 5
+            lineWidth: 0
+          ,
+            name: 'eagle'
+            data: result['eagle']
+            color: 'rgba(119, 152, 191, .2)'
+            marker:
+              radius: 5
+            lineWidth: 0
           ]
 
   $.get "./running", (data) ->
