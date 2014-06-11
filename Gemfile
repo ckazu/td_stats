@@ -5,6 +5,7 @@ gem 'redis'
 gem 'whenever', require: false
 
 # sinatra
+gem 'thin'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'haml'
