@@ -147,10 +147,11 @@ $ ->
 
       result = []
       _.each data, (_data) ->
+        time = moment(_data['end_at'] * 1000).unix() - moment(_data['end_at'] * 1000).hour(0).minute(0).second(0).millisecond(0).unix()
         if result[_data['db_name']]
-          result[_data['db_name']].push [Number(moment(_data['end_at'] * 1000).format('HHmm')), _data['elapsed']]
+          result[_data['db_name']].push [time, _data['elapsed']]
         else
-          result[_data['db_name']] = [[Number(moment(_data['end_at'] * 1000).format('HHmm')), _data['elapsed']]]
+          result[_data['db_name']] = [[time, _data['elapsed']]]
 
       $("#elapsed_dist").highcharts
         chart:
@@ -176,7 +177,7 @@ $ ->
           ,
             name: 'eagle'
             data: result['eagle']
-            color: 'rgba(119, 152, 191, .2)'
+            color: 'rgba(119, 152, 223, .2)'
             marker:
               radius: 5
             lineWidth: 0
