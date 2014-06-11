@@ -22,9 +22,10 @@ class TdStats
   end
 end
 
-def save(jobs)
+def save_jobs
+  td_cli = TdStats::Client.new
   redis_cli = Redis.new
-  jobs.each do |job|
+  td_cli.jobs.each do |job|
     value = {
       job_id: job.job_id,
       db_name: job.db_name,
@@ -37,37 +38,51 @@ def save(jobs)
   end
 end
 
-def count_and_save(jobs, type)
+def count_and_save
+  # [FIXME] should not check 'all' data
   result = {}
+  error = {}
 
-  jobs.each do |job|
-    if job.start_at
-      time = job.start_at.change(min: 0, sec: 0).to_i
-      result[time] ? (result[time] += 1) : (result[time] = 1)
+  # [ToDo] refactor
+  redis_cli = Redis.new
+  redis_cli.keys("job-*").each do |key|
+    job = instance_eval(redis_cli.get key)
+    if job[:start_at]
+      result[job[:db_name]] = {} unless result.has_key? job[:db_name]
+      error[job[:db_name]] = {} unless error.has_key? job[:db_name]
+      time = Time.at(job[:start_at]).change(min: 0, sec: 0).to_i
+      result[job[:db_name]][time] ? (result[job[:db_name]][time] += 1) : (result[job[:db_name]][time] = 1)
+      if job[:status] == 'error'
+        error[job[:db_name]][time] ? (error[job[:db_name]][time] += 1) : (error[job[:db_name]][time] = 1)
+      end
     end
   end
 
-  redis_cli = Redis.new
-  result.each {|key, value| redis_cli.set "#{type}-#{key}", value }
+  # [ToDo] refactor
+  all = {}
+  result.each do |db_name, values|
+    values.each do |time, value|
+      redis_cli.set("#{db_name}-#{time}", value)
+      all[time] ? (all[time] += value) : (all[time] = value)
+    end
+  end
+  all.each {|time, value| redis_cli.set("all-#{time}", value) }
+
+  all = {}
+  error.each do |db_name, values|
+    values.each do |time, value|
+      redis_cli.set("error-#{db_name}-#{time}", value)
+      all[time] ? (all[time] += value) : (all[time] = value)
+    end
+  end
+  all.each {|time, value| redis_cli.set("error-all-#{time}", value) }
 end
 
 def aggregate
-  begin
-  td_cli = TdStats::Client.new
-  jobs = td_cli.jobs
-
-  save(jobs)
-
-  count_and_save(jobs, 'all')
-  count_and_save(jobs.select{|job| job.status == 'error' }, 'error-all')
-
-  td_cli.databases.map(&:name).each do |database|
-    count_and_save(jobs.select {|job| job.db_name == database }, "#{database}")
-    count_and_save(jobs.select {|job| job.status == 'error' && job.db_name == database }, "error-#{database}")
-  end
-  rescue => e
-    puts e
-  end
+  save_jobs
+  count_and_save
+rescue => e
+  puts e
 end
 
 def save_records
