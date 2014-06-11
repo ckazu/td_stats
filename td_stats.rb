@@ -52,6 +52,7 @@ def count_and_save(jobs, type)
 end
 
 def aggregate
+  begin
   td_cli = TdStats::Client.new
   jobs = td_cli.jobs
 
@@ -63,6 +64,9 @@ def aggregate
   td_cli.databases.map(&:name).each do |database|
     count_and_save(jobs.select {|job| job.db_name == database }, "#{database}")
     count_and_save(jobs.select {|job| job.status == 'error' && job.db_name == database }, "error-#{database}")
+  end
+  rescue => e
+    puts e
   end
 end
 
